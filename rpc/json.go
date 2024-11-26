@@ -143,10 +143,14 @@ type jsonError struct {
 }
 
 func (err *jsonError) Error() string {
-	if err.Message == "" {
-		return fmt.Sprintf("json-rpc error %d", err.Code)
+	data, marshalErr := json.Marshal(err)
+	if marshalErr != nil {
+		if err.Message == "" {
+			return fmt.Sprintf("json-rpc error %d", err.Code)
+		}
+		return err.Message
 	}
-	return err.Message
+	return string(data)
 }
 
 func (err *jsonError) ErrorCode() int {
